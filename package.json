@@ -1,0 +1,11 @@
+{
+  "name": "nexus-suite-website",
+  "version": "1.0.0",
+  "description": "Nexus Suite - Official landing page",
+  "scripts": {
+    "start": "npx serve -s . -l $PORT"
+  },
+  "dependencies": {
+    "serve": "^14.2.3"
+  }
+}
