@@ -8,21 +8,26 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><polygon points='50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5' fill='%230a0a0f' stroke='%237c3aed' stroke-width='6'/><polygon points='50,20 75,35 75,65 50,80 25,65 25,35' fill='none' stroke='%2306b6d4' stroke-width='3'/></svg>">
   <style>
     :root {
-      --bg: #0a0a0f;
-      --sidebar: #0d0d1a;
-      --card: #111122;
-      --card2: #16162a;
+      --bg: #06060c;
+      --bg2: #0a0a12;
+      --sidebar: #0c0c18;
+      --card: #10101c;
+      --card2: #141422;
+      --card3: #18182a;
       --primary: #7c3aed;
-      --primary-glow: rgba(124,58,237,0.45);
+      --primary-dim: #5b21b6;
+      --primary-glow: rgba(124,58,237,0.5);
       --cyan: #06b6d4;
-      --cyan-glow: rgba(6,182,212,0.35);
-      --success: #2ecc71;
-      --error: #e74c3c;
-      --warn: #f39c12;
-      --text: #e8e8ff;
-      --muted: #7a7a9a;
-      --border: rgba(124,58,237,0.22);
-      --border-bright: rgba(124,58,237,0.5);
+      --cyan-glow: rgba(6,182,212,0.4);
+      --success: #22c55e;
+      --error: #ef4444;
+      --warn: #f59e0b;
+      --text: #ececff;
+      --muted: #6b6b8a;
+      --muted2: #4a4a66;
+      --border: rgba(124,58,237,0.18);
+      --border2: rgba(124,58,237,0.35);
+      --border-cyan: rgba(6,182,212,0.3);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -31,10 +36,24 @@
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      line-height: 1.6;
+      line-height: 1.55;
       overflow-x: hidden;
     }
 
+    /* grid background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* scanlines */
     body::before {
       content: '';
       position: fixed;
@@ -42,30 +61,31 @@
       background: repeating-linear-gradient(
         0deg,
         transparent,
-        transparent 2px,
-        rgba(0,0,0,0.03) 2px,
-        rgba(0,0,0,0.03) 4px
+        transparent 3px,
+        rgba(0,0,0,0.04) 3px,
+        rgba(0,0,0,0.04) 4px
       );
       pointer-events: none;
-      z-index: 9999;
+      z-index: 9998;
     }
 
-    .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
+    /* ========== TOP BAR ========== */
     .hud-top {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(10,10,15,0.92);
-      backdrop-filter: blur(16px);
+      background: rgba(6,6,12,0.94);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
     }
     .hud-top-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 58px;
-      max-width: 1180px;
+      height: 54px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 24px;
     }
@@ -74,57 +94,61 @@
       align-items: center;
       gap: 10px;
       font-weight: 900;
-      letter-spacing: 5px;
-      font-size: 1.05rem;
-      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      letter-spacing: 6px;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #c4b5fd, var(--primary), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .hud-logo .hex {
-      color: var(--primary);
       -webkit-text-fill-color: var(--primary);
-      font-size: 1.4rem;
-      filter: drop-shadow(0 0 8px var(--primary-glow));
+      font-size: 1.35rem;
+      filter: drop-shadow(0 0 10px var(--primary-glow));
+      animation: hexPulse 3s ease-in-out infinite;
     }
-    .hud-status {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-family: ui-monospace, monospace;
+    @keyframes hexPulse {
+      0%, 100% { filter: drop-shadow(0 0 8px var(--primary-glow)); }
+      50% { filter: drop-shadow(0 0 18px var(--primary-glow)); }
     }
-    .hud-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 4px 12px;
-      border-radius: 999px;
-    }
-    .dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-    .nav-links { display: flex; gap: 22px; }
+    .nav-links { display: flex; gap: 20px; }
     .nav-links a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       transition: color 0.2s;
-      letter-spacing: 0.3px;
+      position: relative;
     }
     .nav-links a:hover { color: var(--cyan); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .hud-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .hud-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
 
+    /* ========== HERO ========== */
     .hero {
       min-height: 100vh;
       display: flex;
@@ -132,68 +156,65 @@
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 110px 24px 80px;
+      padding: 100px 24px 70px;
       position: relative;
       background:
-        radial-gradient(ellipse 70% 45% at 50% -10%, rgba(124,58,237,0.22), transparent),
-        radial-gradient(ellipse 40% 30% at 80% 60%, rgba(6,182,212,0.08), transparent);
+        radial-gradient(ellipse 80% 50% at 50% -15%, rgba(124,58,237,0.2), transparent),
+        radial-gradient(ellipse 50% 40% at 85% 70%, rgba(6,182,212,0.06), transparent);
     }
     .hero-frame {
       position: relative;
-      border: 1px solid var(--border);
-      background: rgba(17,17,34,0.55);
-      backdrop-filter: blur(8px);
-      border-radius: 20px;
-      padding: 48px 56px 42px;
-      max-width: 820px;
+      border: 1px solid var(--border2);
+      background: linear-gradient(160deg, rgba(16,16,28,0.85), rgba(10,10,18,0.7));
+      backdrop-filter: blur(12px);
+      border-radius: 4px;
+      padding: 52px 60px 44px;
+      max-width: 860px;
       width: 100%;
-      box-shadow: 0 0 80px rgba(124,58,237,0.12), inset 0 1px 0 rgba(255,255,255,0.04);
+      box-shadow:
+        0 0 100px rgba(124,58,237,0.1),
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        inset 0 0 60px rgba(124,58,237,0.03);
     }
-    .hero-frame::before,
-    .hero-frame::after {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      border: 2px solid var(--primary);
-    }
-    .hero-frame::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-    .hero-frame::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-    .corner-tr, .corner-bl {
-      position: absolute;
-      width: 18px; height: 18px;
-      border: 2px solid var(--cyan);
-    }
-    .corner-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
-    .corner-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+    /* corner brackets */
+    .hero-frame .c { position: absolute; width: 22px; height: 22px; }
+    .hero-frame .c-tl { top: -1px; left: -1px; border-top: 2px solid var(--primary); border-left: 2px solid var(--primary); }
+    .hero-frame .c-tr { top: -1px; right: -1px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); }
+    .hero-frame .c-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); }
+    .hero-frame .c-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--primary); border-right: 2px solid var(--primary); }
 
     .hero-hex {
-      font-size: 2.8rem;
+      font-size: 3rem;
       color: var(--primary);
-      margin-bottom: 6px;
-      filter: drop-shadow(0 0 18px var(--primary-glow));
+      margin-bottom: 4px;
+      filter: drop-shadow(0 0 22px var(--primary-glow));
+      line-height: 1;
     }
     .hero-title {
-      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-size: clamp(2.6rem, 6.5vw, 4.4rem);
       font-weight: 900;
-      letter-spacing: 10px;
-      background: linear-gradient(135deg, #c4b5fd, var(--primary), var(--cyan));
+      letter-spacing: 12px;
+      background: linear-gradient(135deg, #ddd6fe, var(--primary) 40%, var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      line-height: 1.1;
     }
     .hero-tag {
-      font-size: 0.95rem;
+      font-size: 0.82rem;
       color: var(--cyan);
-      letter-spacing: 3px;
+      letter-spacing: 4px;
       text-transform: uppercase;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
       font-weight: 600;
+      opacity: 0.9;
     }
     .hero-main {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 600;
-      margin-bottom: 28px;
+      margin-bottom: 30px;
       color: var(--text);
+      letter-spacing: 0.5px;
     }
     .btn-row {
       display: flex;
@@ -205,91 +226,95 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      background: linear-gradient(135deg, var(--primary), #5b21b6);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dim));
       color: #fff;
-      padding: 15px 36px;
-      border-radius: 10px;
-      font-size: 1.05rem;
+      padding: 14px 34px;
+      border-radius: 6px;
+      font-size: 1rem;
       font-weight: 700;
       text-decoration: none;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       transition: all 0.25s ease;
-      box-shadow: 0 0 32px var(--primary-glow);
-      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 28px var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.08);
       cursor: pointer;
+      text-transform: uppercase;
+      font-size: 0.88rem;
     }
     .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 48px rgba(124,58,237,0.55);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 40px rgba(124,58,237,0.55);
     }
     .btn-ghost {
       background: transparent;
-      border: 1px solid var(--border-bright);
+      border: 1px solid var(--border2);
       box-shadow: none;
       color: var(--text);
     }
     .btn-ghost:hover {
-      background: rgba(124,58,237,0.12);
-      box-shadow: 0 0 24px var(--primary-glow);
+      background: rgba(124,58,237,0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 20px var(--primary-glow);
     }
 
     .hud-stats {
       display: flex;
-      gap: 12px;
-      margin-top: 32px;
+      gap: 10px;
+      margin-top: 34px;
       flex-wrap: wrap;
       justify-content: center;
     }
     .hud-stat {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 18px;
+      border-radius: 4px;
+      padding: 8px 16px;
       font-family: ui-monospace, monospace;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: var(--muted);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
+      letter-spacing: 0.5px;
     }
-    .hud-stat strong { color: var(--cyan); }
+    .hud-stat strong { color: var(--cyan); font-weight: 700; }
 
-    section { padding: 90px 0; position: relative; }
-    .section-header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
+    /* ========== SECTION BASE ========== */
+    section { padding: 88px 0; position: relative; z-index: 1; }
+    .section-header { text-align: center; margin-bottom: 44px; }
     .section-label {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       letter-spacing: 4px;
       text-transform: uppercase;
       color: var(--cyan);
       margin-bottom: 8px;
       font-weight: 600;
+      font-family: ui-monospace, monospace;
     }
     .section-title {
-      font-size: 2rem;
+      font-size: 1.9rem;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       margin-bottom: 10px;
     }
     .section-sub {
       color: var(--muted);
-      max-width: 560px;
+      max-width: 540px;
       margin: 0 auto;
-      font-size: 1.02rem;
+      font-size: 0.98rem;
     }
 
+    /* ========== OVERVIEW ========== */
     .overview-grid {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 28px;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
     }
     .panel {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 28px;
+      border-radius: 6px;
+      padding: 26px;
       position: relative;
       overflow: hidden;
     }
@@ -300,181 +325,162 @@
       height: 2px;
       background: linear-gradient(90deg, var(--primary), var(--cyan), transparent);
     }
+    .panel-tag {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-family: ui-monospace, monospace;
+    }
     .panel h3 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .panel p { color: var(--muted); font-size: 0.98rem; margin-bottom: 14px; }
+    .panel p { color: var(--muted); font-size: 0.92rem; margin-bottom: 12px; }
     .panel ul { list-style: none; }
     .panel li {
       color: var(--muted);
-      font-size: 0.92rem;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.88rem;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
     .panel li::before {
-      content: '▹';
+      content: '▸';
       color: var(--cyan);
-      font-weight: bold;
+      font-size: 0.75rem;
     }
 
     .stat-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
     .stat-box {
       background: var(--card2);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 14px;
+      border-radius: 5px;
+      padding: 16px 12px;
       text-align: center;
+      transition: border-color 0.2s;
     }
+    .stat-box:hover { border-color: var(--border2); }
     .stat-box .num {
-      font-size: 1.9rem;
+      font-size: 1.75rem;
       font-weight: 800;
       background: linear-gradient(135deg, var(--primary), var(--cyan));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      line-height: 1.2;
     }
     .stat-box .lbl {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       color: var(--muted);
       margin-top: 4px;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
+      font-family: ui-monospace, monospace;
     }
 
+    /* side telemetry strip */
+    .telemetry {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .tele-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.72rem;
+    }
+    .tele-item .t-label { color: var(--muted2); letter-spacing: 1px; margin-bottom: 3px; }
+    .tele-item .t-val { color: var(--cyan); font-weight: 600; }
+
+    /* ========== FEATURES ========== */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+      gap: 14px;
     }
     .feature-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 26px 22px;
+      border-radius: 6px;
+      padding: 24px 20px;
       transition: all 0.25s;
       position: relative;
+      overflow: hidden;
+    }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
     }
     .feature-card:hover {
-      border-color: var(--border-bright);
-      transform: translateY(-4px);
-      box-shadow: 0 14px 40px rgba(124,58,237,0.12);
+      border-color: var(--border2);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 36px rgba(124,58,237,0.1);
     }
+    .feature-card:hover::after { opacity: 1; }
     .feature-icon {
-      width: 42px; height: 42px;
-      border-radius: 10px;
-      background: rgba(124,58,237,0.15);
+      width: 40px; height: 40px;
+      border-radius: 6px;
+      background: rgba(124,58,237,0.12);
       border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       margin-bottom: 14px;
     }
-    .feature-card h3 { font-size: 1.08rem; margin-bottom: 8px; }
-    .feature-card p { color: var(--muted); font-size: 0.9rem; }
+    .feature-card h3 { font-size: 1.02rem; margin-bottom: 7px; }
+    .feature-card p { color: var(--muted); font-size: 0.86rem; }
 
-    .pipeline-section { background: var(--sidebar); }
-    .phases {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .phase {
-      display: flex;
-      gap: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px 18px;
-      align-items: flex-start;
-      transition: border-color 0.2s;
-    }
-    .phase:hover { border-color: var(--cyan); }
-    .phase-num {
-      min-width: 42px; height: 42px;
-      border-radius: 9px;
-      background: linear-gradient(135deg, var(--primary), #5b21b6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 0.95rem;
-      box-shadow: 0 0 16px var(--primary-glow);
-    }
-    .phase h4 { font-size: 0.98rem; margin-bottom: 3px; }
-    .phase p { color: var(--muted); font-size: 0.85rem; }
-
-    .agents-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .agent-card {
-      background: var(--card);
-      border-radius: 14px;
-      padding: 24px 18px;
-      border: 1px solid var(--border);
-      text-align: center;
-      transition: all 0.25s;
-      position: relative;
-      overflow: hidden;
-    }
-    .agent-card:hover { transform: translateY(-3px); }
-    .agent-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      margin: 0 auto 12px;
-      box-shadow: 0 0 12px currentColor;
-    }
-    .agent-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
-    .agent-card p { color: var(--muted); font-size: 0.85rem; }
-    .agent-role {
-      margin-top: 10px;
-      font-size: 0.72rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0.7;
-    }
-
+    /* ========== CONSOLE ========== */
     .console-panel {
-      background: #0c0c14;
+      background: #08080f;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
       overflow: hidden;
-      margin-top: 40px;
-      font-family: ui-monospace, 'Cascadia Code', monospace;
+      margin-top: 36px;
+      font-family: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
     }
     .console-bar {
       background: var(--card2);
-      padding: 10px 16px;
+      padding: 9px 16px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--muted);
     }
+    .console-bar .left { display: flex; align-items: center; gap: 10px; }
     .console-bar .dots span {
       display: inline-block;
-      width: 10px; height: 10px;
+      width: 9px; height: 9px;
       border-radius: 50%;
-      margin-right: 5px;
+      margin-right: 4px;
     }
     .console-body {
-      padding: 16px 18px;
-      font-size: 0.82rem;
-      line-height: 1.7;
-      max-height: 220px;
+      padding: 14px 18px;
+      font-size: 0.78rem;
+      line-height: 1.75;
+      max-height: 240px;
       overflow: hidden;
     }
     .c-line { color: var(--muted); }
@@ -482,101 +488,228 @@
     .c-info { color: var(--cyan); }
     .c-warn { color: var(--warn); }
     .c-ai { color: var(--primary); }
+    .c-dim { color: var(--muted2); }
 
+    /* ========== PIPELINE ========== */
+    .pipeline-section { background: var(--sidebar); }
+    .phases {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .phase {
+      display: flex;
+      gap: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 14px 16px;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+    .phase:hover {
+      border-color: var(--border-cyan);
+      background: var(--card2);
+    }
+    .phase-num {
+      min-width: 38px; height: 38px;
+      border-radius: 5px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dim));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.88rem;
+      box-shadow: 0 0 14px var(--primary-glow);
+      font-family: ui-monospace, monospace;
+    }
+    .phase h4 { font-size: 0.92rem; margin-bottom: 2px; }
+    .phase p { color: var(--muted); font-size: 0.8rem; }
+
+    /* ========== AGENTS ========== */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .agent-card {
+      background: var(--card);
+      border-radius: 6px;
+      padding: 22px 16px;
+      border: 1px solid var(--border);
+      text-align: center;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .agent-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .agent-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: currentColor;
+      opacity: 0.6;
+    }
+    .agent-dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      margin: 0 auto 11px;
+      box-shadow: 0 0 14px currentColor;
+    }
+    .agent-card h3 { font-size: 1.05rem; margin-bottom: 5px; }
+    .agent-card p { color: var(--muted); font-size: 0.8rem; }
+    .agent-role {
+      margin-top: 10px;
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.65;
+      font-family: ui-monospace, monospace;
+    }
+
+    /* ========== TECH STACK BAR ========== */
+    .tech-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 36px;
+    }
+    .tech-chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 6px 14px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: ui-monospace, monospace;
+      letter-spacing: 0.5px;
+    }
+    .tech-chip span { color: var(--cyan); }
+
+    /* ========== INSTALL ========== */
     .steps {
       display: grid;
-      gap: 12px;
-      max-width: 720px;
+      gap: 10px;
+      max-width: 700px;
       margin: 0 auto;
     }
     .step {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px 20px;
+      border-radius: 5px;
+      padding: 16px 18px;
       align-items: flex-start;
       transition: border-color 0.2s;
     }
-    .step:hover { border-color: var(--border-bright); }
+    .step:hover { border-color: var(--border2); }
     .step-num {
-      min-width: 34px; height: 34px;
-      border-radius: 8px;
+      min-width: 32px; height: 32px;
+      border-radius: 5px;
       background: var(--primary);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 0 14px var(--primary-glow);
+      font-size: 0.85rem;
+      box-shadow: 0 0 12px var(--primary-glow);
+      font-family: ui-monospace, monospace;
     }
-    .step h4 { margin-bottom: 3px; font-size: 0.98rem; }
-    .step p { color: var(--muted); font-size: 0.88rem; }
+    .step h4 { margin-bottom: 2px; font-size: 0.95rem; }
+    .step p { color: var(--muted); font-size: 0.84rem; }
 
+    /* ========== DOWNLOAD ========== */
     .download {
       text-align: center;
       padding: 100px 24px;
-      background:
-        radial-gradient(ellipse at center, rgba(124,58,237,0.14), transparent 65%);
+      background: radial-gradient(ellipse at center, rgba(124,58,237,0.12), transparent 65%);
     }
     .download-frame {
       display: inline-block;
       background: var(--card);
-      border: 1px solid var(--border-bright);
-      border-radius: 18px;
-      padding: 48px 56px;
-      box-shadow: 0 0 60px rgba(124,58,237,0.18);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 48px 60px;
+      box-shadow: 0 0 70px rgba(124,58,237,0.15);
       position: relative;
     }
     .download-frame::before {
       content: 'DIRECT DOWNLOAD';
       position: absolute;
-      top: -12px; left: 50%;
+      top: -11px; left: 50%;
       transform: translateX(-50%);
       background: var(--primary);
       color: #fff;
-      font-size: 0.7rem;
-      letter-spacing: 2px;
-      padding: 4px 14px;
-      border-radius: 999px;
+      font-size: 0.65rem;
+      letter-spacing: 2.5px;
+      padding: 4px 16px;
+      border-radius: 3px;
       font-weight: 700;
-    }
-    .download h2 { margin-bottom: 10px; font-size: 1.8rem; }
-    .download p { color: var(--muted); margin-bottom: 28px; max-width: 420px; margin-left: auto; margin-right: auto; }
-    .dl-meta {
-      margin-top: 20px;
-      font-size: 0.8rem;
-      color: var(--muted);
       font-family: ui-monospace, monospace;
     }
+    .download h2 { margin-bottom: 8px; font-size: 1.7rem; letter-spacing: 1px; }
+    .download p { color: var(--muted); margin-bottom: 26px; max-width: 400px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+    .dl-meta {
+      margin-top: 18px;
+      font-size: 0.75rem;
+      color: var(--muted2);
+      font-family: ui-monospace, monospace;
+      letter-spacing: 0.5px;
+    }
 
+    /* ========== FOOTER ========== */
     footer {
       border-top: 1px solid var(--border);
-      padding: 36px 0;
+      padding: 32px 0;
       text-align: center;
       color: var(--muted);
-      font-size: 0.88rem;
+      font-size: 0.84rem;
+      position: relative;
+      z-index: 1;
     }
     footer .brand {
       font-weight: 800;
-      letter-spacing: 4px;
+      letter-spacing: 5px;
       color: var(--primary);
       margin-bottom: 6px;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
     footer a { color: var(--cyan); text-decoration: none; }
 
-    @media (max-width: 900px) {
-      .features-grid, .agents-grid, .phases, .overview-grid { grid-template-columns: 1fr; }
-      .hud-status { display: none; }
-      .hero-frame { padding: 36px 24px; }
+    /* ========== EXTRA: FLOATING SIDE RAILS ========== */
+    .side-rail {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 2px;
+      height: 120px;
+      background: linear-gradient(180deg, transparent, var(--primary), transparent);
+      opacity: 0.4;
+      z-index: 50;
+      pointer-events: none;
+    }
+    .side-rail.left { left: 12px; }
+    .side-rail.right { right: 12px; background: linear-gradient(180deg, transparent, var(--cyan), transparent); }
+
+    /* responsive */
+    @media (max-width: 960px) {
+      .features-grid, .agents-grid, .phases, .overview-grid, .telemetry { grid-template-columns: 1fr; }
+      .hud-right, .side-rail { display: none; }
+      .hero-frame { padding: 36px 22px; }
       .nav-links { display: none; }
+      .download-frame { padding: 40px 28px; }
     }
   </style>
 </head>
 <body>
 
+<div class="side-rail left"></div>
+<div class="side-rail right"></div>
+
+<!-- TOP HUD -->
 <header class="hud-top">
   <div class="hud-top-inner">
     <div class="hud-logo">
@@ -584,23 +717,26 @@
     </div>
     <div class="nav-links">
       <a href="#overview">Overview</a>
-      <a href="#features">Features</a>
+      <a href="#features">Modules</a>
       <a href="#pipeline">Pipeline</a>
       <a href="#agents">Agents</a>
       <a href="#install">Install</a>
       <a href="#download">Download</a>
     </div>
-    <div class="hud-status">
-      <div class="hud-pill"><span class="dot"></span> SYSTEM ONLINE</div>
-      <div class="hud-pill">v1.0.0</div>
+    <div class="hud-right">
+      <div class="hud-chip">v1.0.0</div>
+      <div class="hud-chip">BUILD STABLE</div>
     </div>
   </div>
 </header>
 
+<!-- HERO -->
 <section class="hero">
   <div class="hero-frame">
-    <div class="corner-tr"></div>
-    <div class="corner-bl"></div>
+    <div class="c c-tl"></div>
+    <div class="c c-tr"></div>
+    <div class="c c-bl"></div>
+    <div class="c c-br"></div>
     <div class="hero-hex">⬡</div>
     <h1 class="hero-title">NEXUS SUITE</h1>
     <p class="hero-tag">Free Forever · No Subscriptions</p>
@@ -618,6 +754,7 @@
   </div>
 </section>
 
+<!-- OVERVIEW -->
 <section id="overview">
   <div class="container">
     <div class="section-header">
@@ -627,18 +764,20 @@
     </div>
     <div class="overview-grid">
       <div class="panel">
-        <h3>⬡ Core Mission</h3>
+        <div class="panel-tag">CORE MISSION</div>
+        <h3>⬡ Multi-Agent Development Engine</h3>
         <p>Nexus Suite runs 6 specialized AI agents across 8 phases to automatically build, debug, test, and deploy complete FiveM scripts and resources — from a single EXE.</p>
         <p>You only pay for your own API keys (~$5–20/mo). The application itself is free forever.</p>
         <ul>
           <li>No more tab-hopping between ChatGPT / Claude / docs</li>
-          <li>Full server control panel + live console</li>
+          <li>Full server control panel + live console with Quick Fix</li>
           <li>Auto security audit before every deploy</li>
           <li>Self-healing fix loop on runtime errors</li>
+          <li>Smart diff viewer + confidence scoring per agent</li>
         </ul>
       </div>
       <div class="panel">
-        <h3>⬡ Live Metrics</h3>
+        <div class="panel-tag">LIVE METRICS</div>
         <div class="stat-grid">
           <div class="stat-box"><div class="num">6</div><div class="lbl">AI Agents</div></div>
           <div class="stat-box"><div class="num">8</div><div class="lbl">Phases</div></div>
@@ -647,9 +786,16 @@
         </div>
       </div>
     </div>
+    <div class="telemetry">
+      <div class="tele-item"><div class="t-label">STACK</div><div class="t-val">Python 3.11+</div></div>
+      <div class="tele-item"><div class="t-label">UI FRAMEWORK</div><div class="t-val">CustomTkinter</div></div>
+      <div class="tele-item"><div class="t-label">BUILD</div><div class="t-val">PyInstaller EXE</div></div>
+      <div class="tele-item"><div class="t-label">APIs</div><div class="t-val">5 Providers</div></div>
+    </div>
   </div>
 </section>
 
+<!-- FEATURES -->
 <section id="features">
   <div class="container">
     <div class="section-header">
@@ -690,30 +836,36 @@
       </div>
     </div>
 
+    <!-- Live Console -->
     <div class="console-panel">
       <div class="console-bar">
-        <div class="dots">
-          <span style="background:#e74c3c;"></span>
-          <span style="background:#f39c12;"></span>
-          <span style="background:#2ecc71;"></span>
+        <div class="left">
+          <div class="dots">
+            <span style="background:#ef4444;"></span>
+            <span style="background:#f59e0b;"></span>
+            <span style="background:#22c55e;"></span>
+          </div>
+          <span>nexus-ai-core — pipeline telemetry</span>
         </div>
-        nexus-ai-core — live pipeline output
+        <span class="c-dim">SCROLL LOCK OFF</span>
       </div>
       <div class="console-body">
-        <div class="c-line">[00:14:02] <span class="c-info">PHASE 1</span> — Server Scanner online</div>
-        <div class="c-line">[00:14:03] Framework detected: <span class="c-ok">ESX Legacy</span> · 47 resources indexed</div>
-        <div class="c-line">[00:14:05] <span class="c-info">PHASE 2</span> — Planning job graph…</div>
-        <div class="c-line">[00:14:07] <span class="c-ai">Claude</span> assigned 6 tasks · confidence 0.94</div>
-        <div class="c-line">[00:14:11] <span class="c-info">PHASE 3</span> — <span class="c-ai">GPT-4o</span> writing client.lua + server.lua</div>
-        <div class="c-line">[00:14:18] <span class="c-ok">✓</span> Code written · <span class="c-ai">Nexus AI</span> validation passed</div>
-        <div class="c-line">[00:14:22] <span class="c-info">PHASE 4</span> — <span class="c-ai">Grok</span> bug scan · 0 critical · 1 style note</div>
-        <div class="c-line">[00:14:29] <span class="c-info">PHASE 7</span> — Security audit <span class="c-ok">CLEAN</span></div>
-        <div class="c-line">[00:14:31] <span class="c-ok">DEPLOYED</span> resource nexus_banking · restarting…</div>
+        <div class="c-line"><span class="c-dim">[00:14:02]</span> <span class="c-info">PHASE 1</span> — Server Scanner online</div>
+        <div class="c-line"><span class="c-dim">[00:14:03]</span> Framework detected: <span class="c-ok">ESX Legacy</span> · 47 resources indexed</div>
+        <div class="c-line"><span class="c-dim">[00:14:05]</span> <span class="c-info">PHASE 2</span> — Planning job graph…</div>
+        <div class="c-line"><span class="c-dim">[00:14:07]</span> <span class="c-ai">Claude</span> assigned 6 tasks · confidence <span class="c-ok">0.94</span></div>
+        <div class="c-line"><span class="c-dim">[00:14:11]</span> <span class="c-info">PHASE 3</span> — <span class="c-ai">GPT-4o</span> writing client.lua + server.lua</div>
+        <div class="c-line"><span class="c-dim">[00:14:18]</span> <span class="c-ok">✓</span> Code written · <span class="c-ai">Nexus AI</span> validation passed</div>
+        <div class="c-line"><span class="c-dim">[00:14:22]</span> <span class="c-info">PHASE 4</span> — <span class="c-ai">Grok</span> bug scan · 0 critical · 1 style note</div>
+        <div class="c-line"><span class="c-dim">[00:14:26]</span> <span class="c-info">PHASE 5</span> — <span class="c-ai">Gemini</span> building NUI · HTML/CSS complete</div>
+        <div class="c-line"><span class="c-dim">[00:14:29]</span> <span class="c-info">PHASE 7</span> — Security audit <span class="c-ok">CLEAN</span></div>
+        <div class="c-line"><span class="c-dim">[00:14:31]</span> <span class="c-ok">DEPLOYED</span> resource nexus_banking · restarting…</div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- PIPELINE -->
 <section class="pipeline-section" id="pipeline">
   <div class="container">
     <div class="section-header">
@@ -782,6 +934,7 @@
   </div>
 </section>
 
+<!-- AGENTS -->
 <section id="agents">
   <div class="container">
     <div class="section-header">
@@ -790,46 +943,54 @@
       <p class="section-sub">Six specialized models working as one coordinated team.</p>
     </div>
     <div class="agents-grid">
-      <div class="agent-card" style="border-color:#9B59B6;">
-        <div class="agent-dot" style="background:#9B59B6;color:#9B59B6;"></div>
+      <div class="agent-card" style="border-color:#9B59B6; color:#9B59B6;">
+        <div class="agent-dot" style="background:#9B59B6;"></div>
         <h3 style="color:#9B59B6;">Claude</h3>
         <p>Planner · Reviewer · Security · Deep Debug</p>
-        <div class="agent-role" style="color:#9B59B6;">Primary Strategist</div>
+        <div class="agent-role">Primary Strategist</div>
       </div>
-      <div class="agent-card" style="border-color:#2ECC71;">
-        <div class="agent-dot" style="background:#2ECC71;color:#2ECC71;"></div>
+      <div class="agent-card" style="border-color:#2ECC71; color:#2ECC71;">
+        <div class="agent-dot" style="background:#2ECC71;"></div>
         <h3 style="color:#2ECC71;">GPT-4o</h3>
         <p>Lead Coder · JS Writer · Syntax Debug</p>
-        <div class="agent-role" style="color:#2ECC71;">Code Engine</div>
+        <div class="agent-role">Code Engine</div>
       </div>
-      <div class="agent-card" style="border-color:#3498DB;">
-        <div class="agent-dot" style="background:#3498DB;color:#3498DB;"></div>
+      <div class="agent-card" style="border-color:#3498DB; color:#3498DB;">
+        <div class="agent-dot" style="background:#3498DB;"></div>
         <h3 style="color:#3498DB;">Grok</h3>
         <p>Fast Bug Scanner</p>
-        <div class="agent-role" style="color:#3498DB;">Rapid Response</div>
+        <div class="agent-role">Rapid Response</div>
       </div>
-      <div class="agent-card" style="border-color:#F1C40F;">
-        <div class="agent-dot" style="background:#F1C40F;color:#F1C40F;"></div>
+      <div class="agent-card" style="border-color:#F1C40F; color:#F1C40F;">
+        <div class="agent-dot" style="background:#F1C40F;"></div>
         <h3 style="color:#F1C40F;">Gemini</h3>
         <p>HTML/CSS Builder · UI QA</p>
-        <div class="agent-role" style="color:#F1C40F;">Frontend Specialist</div>
+        <div class="agent-role">Frontend Specialist</div>
       </div>
-      <div class="agent-card" style="border-color:#1ABC9C;">
-        <div class="agent-dot" style="background:#1ABC9C;color:#1ABC9C;"></div>
+      <div class="agent-card" style="border-color:#1ABC9C; color:#1ABC9C;">
+        <div class="agent-dot" style="background:#1ABC9C;"></div>
         <h3 style="color:#1ABC9C;">Perplexity</h3>
         <p>Live Docs QA Check</p>
-        <div class="agent-role" style="color:#1ABC9C;">Knowledge Layer</div>
+        <div class="agent-role">Knowledge Layer</div>
       </div>
-      <div class="agent-card" style="border-color:#7c3aed;">
-        <div class="agent-dot" style="background:#7c3aed;color:#7c3aed;"></div>
+      <div class="agent-card" style="border-color:#7c3aed; color:#7c3aed;">
+        <div class="agent-dot" style="background:#7c3aed;"></div>
         <h3 style="color:#7c3aed;">Nexus AI</h3>
         <p>FiveM Standards Validator</p>
-        <div class="agent-role" style="color:#7c3aed;">Final Authority</div>
+        <div class="agent-role">Final Authority</div>
       </div>
+    </div>
+
+    <div class="tech-bar">
+      <div class="tech-chip"><span>LANG</span> Python 3.11+</div>
+      <div class="tech-chip"><span>UI</span> CustomTkinter</div>
+      <div class="tech-chip"><span>BUILD</span> PyInstaller</div>
+      <div class="tech-chip"><span>APIs</span> Anthropic · OpenAI · xAI · Google · Perplexity</div>
     </div>
   </div>
 </section>
 
+<!-- INSTALL -->
 <section id="install" style="background:var(--sidebar);">
   <div class="container">
     <div class="section-header">
@@ -877,17 +1038,19 @@
   </div>
 </section>
 
+<!-- DOWNLOAD -->
 <section class="download" id="download">
   <div class="download-frame">
     <h2>Download Nexus Suite</h2>
     <p>Free forever. No subscriptions. Bring your own API keys.</p>
     <a href="nexus-suite.zip" class="btn" download="NexusSuite.zip">⬇ Download ZIP</a>
     <div class="dl-meta">
-      nexus-suite.zip · ~20 KB · Windows · Python 3.11+
+      nexus-suite.zip · ~18 KB · Windows · Python 3.11+
     </div>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="brand">⬡ NEXUS SUITE</div>
